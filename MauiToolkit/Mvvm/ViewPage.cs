@@ -22,7 +22,7 @@ public class ViewPage<TViewModel> : ViewPage where TViewModel : ViewModel, new()
     /// <summary>
     /// Ensures that the ViewModel has been created and the BindingContext is using it.
     /// </summary>
-    private void EnsureViewModel()
+    protected void EnsureViewModel()
     {
         if (BindingContext is TViewModel vm)
         {
