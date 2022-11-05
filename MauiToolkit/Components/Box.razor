@@ -1,0 +1,23 @@
+﻿<div class="box">
+    <div class="box-title">
+        @Title
+    </div>
+    <div class="box-content">
+        @Content
+    </div>
+</div>
+
+@code {
+
+    /// <summary>
+    /// Gets or sets the content that appears in the contents of the box.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? Content { get; set; }
+
+    /// <summary>
+    /// Gets or sets the content that appears in the title of the box.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? Title { get; set; }
+}

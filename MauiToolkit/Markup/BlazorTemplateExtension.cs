@@ -31,6 +31,9 @@ namespace MauiToolkit.Markup
                 // Create the Blazor WebView
                 BlazorWebView webView = new BlazorWebView();
 
+                // Enable routing extensions
+                webView.EnableRoutingExtensions();
+
                 // Set the host page
                 webView.HostPage = HostPage;
 
