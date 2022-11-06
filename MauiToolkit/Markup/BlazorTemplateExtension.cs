@@ -113,7 +113,7 @@ namespace MauiToolkit.Markup
         /// <summary>
         /// Gets or sets the name of the Blazor component type that will be used to generate the template.
         /// </summary>
-        public string ComponentType { get; set; }
+        public string ComponentType { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the path to the HTML file to render.

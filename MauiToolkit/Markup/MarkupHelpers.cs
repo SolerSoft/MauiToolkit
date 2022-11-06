@@ -19,8 +19,11 @@ namespace MauiToolkit.Markup
         /// <param name="e">
         /// The UrlLoading event data.
         /// </param>
-        private static async void RouteUrlLoadingHandler(object sender, UrlLoadingEventArgs e)
+        private static async void RouteUrlLoadingHandler(object? sender, UrlLoadingEventArgs? e)
         {
+            // Make sure we got args
+            if (e == null) { return; }
+
             // Get original string
             string original = e.Url.OriginalString;
 

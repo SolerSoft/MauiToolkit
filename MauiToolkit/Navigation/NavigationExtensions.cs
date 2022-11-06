@@ -29,7 +29,9 @@ static public class NavigationExtensions
             string name = namedValue[0];
             for (int i = 0; i < param.ArgumentCount; i++)
             {
-                name = name.Replace($"{{{i}}}", param.GetArgument(i).ToString());
+                var arg = param.GetArgument(i) ?? string.Empty;
+
+                name = name.Replace($"{{{i}}}", arg.ToString());
             }
             name = name.Trim();
 
@@ -37,7 +39,7 @@ static public class NavigationExtensions
             int index = int.Parse(namedValue[1].Trim(' ', '{', '}'));
 
             // Add
-            parameters[name] = param.GetArgument(index);
+            parameters[name] = param.GetArgument(index) ?? string.Empty;
         }
 
         // Done!
