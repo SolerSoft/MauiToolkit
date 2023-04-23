@@ -1,4 +1,5 @@
 ﻿using MauiToolkit.Components;
+using MauiToolkit.Controls;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebView.Maui;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,65 +8,46 @@ using System.Runtime.CompilerServices;
 namespace MauiToolkit.Markup
 {
     /// <summary>
-    /// Generates a <see cref="DataTemplate"/> that will load a Blazor component through a BlazorWebView
+    /// Generates a <see cref="DataTemplate"/> that will load a Blazor Route through a BlazorWebView
     /// </summary>
-    [ContentProperty(nameof(ComponentType))]
+    [ContentProperty(nameof(Route))]
     public sealed class BlazorTemplateExtension : IMarkupExtension<DataTemplate>
     {
         /// <summary>
-        /// Creates a <see cref="DataTemplate"/> that renders a Blazor component.
+        /// Creates a <see cref="DataTemplate"/> that renders a Blazor Route.
         /// </summary>
-        /// <param name="componentType">
-        /// The type of the component to render.
+        /// <param name="route">
+        /// The route to render.
         /// </param>
         /// <returns>
         /// The <see cref="DataTemplate"/>.
         /// </returns>
-        private DataTemplate CreateComponentTemplate(Type componentType)
+        private DataTemplate CreateRouteTemplate(string route)
         {
             // Create a DataTemplate that lazy loads the browser
             return new DataTemplate(() =>
             {
                 // Create the Content Page and add it to the template
-                ContentPage page = new ContentPage();
+                ContentPage contentPage = new ContentPage();
 
-                // Create the Blazor WebView
-                BlazorWebView webView = new BlazorWebView();
-
-                // Enable routing extensions
-                webView.EnableRoutingExtensions();
-
-                // Set the host page
-                webView.HostPage = HostPage;
-                
-                // Create a RootComponent for the component
-                RootComponent component = new RootComponent()
+                // Create the Blazor Host View
+                BlazorHostView hostView = new BlazorHostView()
                 {
-                    // ComponentType = componentType,
-                    ComponentType = typeof(BlazorHost),
-                    Selector = Selector,
+                    // Use the components assembly
+                    InitialRoute = route,
+
+                    // Set the host page
+                    HostPage = HostPage,
                 };
 
-                // Build parameters
-                Dictionary<string, object?> parameters = new();
+                // Enable routing extensions
+                hostView.EnableRoutingExtensions();
 
-                // Specify the app assembly
-                parameters.Add("AppAssembly", componentType.Assembly);
-
-                // Set parameters
-                component.Parameters = parameters;
-
-                // Add the RootComponent to the RootComponents list
-                webView.RootComponents.Add(component);
-
-                // Set the page content to the WebView
-                page.Content = webView;
-
-                // Navigate
-                // webView.HostPage = "/thecounter";
+                // Set the page content to the Host View
+                contentPage.Content = hostView;
 
                 // Return the page
-                return page;
+                return contentPage;
             });
         }
 
@@ -89,35 +71,14 @@ namespace MauiToolkit.Markup
                 throw new ArgumentNullException(nameof(serviceProvider));
             }
 
-            // Need a Xaml type resolver to resolve types
-            if (!(serviceProvider.GetService(typeof(IXamlTypeResolver)) is IXamlTypeResolver typeResolver))
+            // If Route isn't specified, log with details about the xaml line where it's missing.
+            if (string.IsNullOrEmpty(Route))
             {
-                throw new ArgumentException("No IXamlTypeResolver in IServiceProvider");
-            }
-
-            // If type isn't specified, log with details about the xaml line where it's missing.
-            if (string.IsNullOrEmpty(ComponentType))
-            {
-                throw new XamlParseException("TypeName isn't set.", serviceProvider.GetLineInfo());
-            }
-
-            // Placeholder for resolved type
-            Type componentType;
-
-            // If we can't resolve the type, log a parse exception with line information
-            if (!typeResolver.TryResolve(ComponentType, out componentType))
-            {
-                throw new XamlParseException($"{nameof(BlazorTemplateExtension)}: Could not locate type for {ComponentType}.", serviceProvider.GetLineInfo());
-            }
-
-            // Now that we have the type, make sure it's a Blazor component
-            if (!typeof(ComponentBase).IsAssignableFrom(componentType))
-            {
-                throw new XamlParseException($"{nameof(BlazorTemplateExtension)}: {ComponentType} is not a Blazor component.", serviceProvider.GetLineInfo());
+                throw new XamlParseException($"{nameof(Route)} isn't set.", serviceProvider.GetLineInfo());
             }
 
             // Create the component template
-            return CreateComponentTemplate(componentType);
+            return CreateRouteTemplate(Route);
         }
 
         #endregion Public Methods
@@ -127,7 +88,7 @@ namespace MauiToolkit.Markup
         /// <summary>
         /// Gets or sets the name of the Blazor component type that will be used to generate the template.
         /// </summary>
-        public string ComponentType { get; set; } = string.Empty;
+        public string Route { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the path to the HTML file to render.
@@ -136,10 +97,10 @@ namespace MauiToolkit.Markup
         public string HostPage { get; set; } = "wwwroot/index.html";
 
         /// <summary>
-		/// Gets or sets the CSS selector string that specifies where in the document the component should be placed.
+		/// Gets or sets the CSS selector string that specifies where in the document the router should be placed.
 		/// This must be unique among the root components within the <see cref="BlazorWebView"/>.
         /// </summary>
-        public string Selector { get; set; } = "#app";
+        public string RouterSelector { get; set; } = "#router";
 
         #endregion Public Properties
     }
