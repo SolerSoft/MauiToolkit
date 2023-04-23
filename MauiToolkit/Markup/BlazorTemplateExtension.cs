@@ -1,4 +1,4 @@
-﻿using MauiToolkit.Pages;
+﻿using MauiToolkit.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebView.Maui;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,0 +1,36 @@
+﻿@using Microsoft.AspNetCore.Components.Routing
+<Router AppAssembly="@AppAssembly">
+	<Found Context="routeData">
+		<RouteView RouteData="@routeData" DefaultLayout="@typeof(BlazorHostLayout)" />
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+	</Found>
+	<NotFound>
+		<LayoutView Layout="@typeof(BlazorHostLayout)">
+			<p role="alert">Sorry, there's nothing at this address.</p>
+		</LayoutView>
+	</NotFound>
+</Router>
+
+@code {
+	@inject NavigationManager NavigationManager
+	
+    protected override void OnInitialized()
+    {
+        if (InitialRoute != null)
+        {
+            NavigationManager.NavigateTo(InitialRoute);
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the main app assembly to be used by the router.
+    /// </summary>
+    [Parameter]
+    public System.Reflection.Assembly AppAssembly { get; set; }
+
+    /// <summary>
+    /// Gets or sets the initial path to load in the router
+    /// </summary>
+    [Parameter]
+    public string? InitialRoute { get; set; }
+}
