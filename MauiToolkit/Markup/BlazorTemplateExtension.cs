@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using MauiToolkit.Pages;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebView.Maui;
 using Microsoft.Extensions.DependencyInjection;
 using System.Runtime.CompilerServices;
@@ -36,19 +37,32 @@ namespace MauiToolkit.Markup
 
                 // Set the host page
                 webView.HostPage = HostPage;
-
+                
                 // Create a RootComponent for the component
                 RootComponent component = new RootComponent()
-                { 
-                    ComponentType = componentType,
+                {
+                    // ComponentType = componentType,
+                    ComponentType = typeof(BlazorHost),
                     Selector = Selector,
                 };
+
+                // Build parameters
+                Dictionary<string, object?> parameters = new();
+
+                // Specify the app assembly
+                parameters.Add("AppAssembly", componentType.Assembly);
+
+                // Set parameters
+                component.Parameters = parameters;
 
                 // Add the RootComponent to the RootComponents list
                 webView.RootComponents.Add(component);
 
                 // Set the page content to the WebView
                 page.Content = webView;
+
+                // Navigate
+                // webView.HostPage = "/thecounter";
 
                 // Return the page
                 return page;
